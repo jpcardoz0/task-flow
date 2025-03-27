@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/CreateUser.dto';
-import { UserNotFound } from './exceptions/UserNotFound.exception';
-import { ExistingUser } from './exceptions/ExistingUser.exception';
-import { EmptyRequest } from './exceptions/EmptyRequest.exception';
+import { UserNotFound } from '../exceptions/UserNotFound.exception';
+import { ExistingUser } from '../exceptions/ExistingUser.exception';
+import { EmptyRequest } from '../exceptions/EmptyRequest.exception';
 
 @Injectable()
 export class UserService {
@@ -14,6 +14,13 @@ export class UserService {
   async findAllUsers() {
     const users = await this.userRepo.find();
     return users;
+  }
+
+  async findUserByName(name: string) {
+    const user = await this.userRepo.findOneBy({ username: name });
+    if (!user) UserNotFound(0, name);
+
+    return user;
   }
 
   async findUserById(userId: number) {
